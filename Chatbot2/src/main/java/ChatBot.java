@@ -7,7 +7,9 @@ import java.util.Random;
 
 public class ChatBot {
     private static final String FILENAME = "D://Database.txt";
+
     public static String keywords[][] = {{ "CODE" , "WHAT IS AVIO?"} , { "EASTER EGG" , "WHO CREATED THIS CHATBOT?" }};
+
     public static final String RED = "\033[0;31m";
     public static final String RESET = "\033[0m";
     public static final String YELLOW = "\033[0;33m";
@@ -48,15 +50,21 @@ public class ChatBot {
             int i = 0;
             int j = 0;
             Response tempresponse = new Response();
+            boolean isKeyWord = false;
             while ((sCurrentLine = br.readLine()) != null) {
                 if(sCurrentLine.contains("#")){
                     KnowledgeBase.add(tempresponse);
                     j = 0;
                     System.out.println(tempresponse.getInput());
                     System.out.println(tempresponse.getOutput());
+                    System.out.println(tempresponse.getKeywords());
                     tempresponse = new Response();
+                    isKeyWord = false;
                 }
-                else {
+                else if(sCurrentLine.contains("*")){
+                    isKeyWord = true;
+                }
+                else if (isKeyWord == false){
                     if (j == 0) {
                         tempresponse.setInput(sCurrentLine);
                         j++;
@@ -64,6 +72,8 @@ public class ChatBot {
                         tempresponse.addOutput(sCurrentLine);
                         j++;
                     }
+                }else {
+                    tempresponse.addKeywords(sCurrentLine);
                 }
             }
 
@@ -94,6 +104,9 @@ public class ChatBot {
             String sInput = in.readLine();
             sInput = sInput.toUpperCase();
             POSSIBLEQUESTIONS = new ArrayList<String>();
+            if(! sInput.contains("?")){
+                sInput = sInput + "?";
+            }
             String sResponse = findMatch(sInput);
             responseWasNull = false;
             if (sInput.equalsIgnoreCase("BYE")) {
@@ -103,14 +116,15 @@ public class ChatBot {
 
                 if (sResponse.length() == 0) {
                     responseWasNull = true;
-                    for (int i = 0; i < keywords.length; i++) {
-                        if (sInput.contains(keywords[i][0])) {
-                            sResponse = findMatch(keywords[i][1]);
-                            keyword = keywords[i][0];
-                            //System.out.println("We couldn't find your exact question :c");
-                            //System.out.println("We looked at some keywords and found you used keyword(s) : " + RED + keywords[i][0] + RESET);
-                            //System.out.println("So we executed the most related question : " + RED + keywords[i][1] + RESET);
-                        }
+                    for (int x = 0; x < KnowledgeBase.size(); x++){
+                        for (int i = 0; i < KnowledgeBase.get(x).getKeywords().size(); i++) {
+                            if (sInput.contains(KnowledgeBase.get(x).getKeywords().get(i))) {
+                                sResponse = findMatch(KnowledgeBase.get(x).input);
+                                keyword = KnowledgeBase.get(x).getKeywords().get(i);
+                                //System.out.println("i'm still looking" + keyword);
+                                //System.out.println(findMatch(KnowledgeBase.get(x).getKeywords().get(i)));
+                            }
+                    }
                     }
                     if(POSSIBLEQUESTIONS.size() == 0){
                         System.out.println(CYAN + "I'M NOT SURE IF I UNDERSTAND WHAT YOU  ARE TALKING ABOUT." + RESET);

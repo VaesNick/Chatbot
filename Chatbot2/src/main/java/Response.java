@@ -4,9 +4,11 @@ public class Response {
 
     public String input;
     public ArrayList<String> Output;
+    public ArrayList<String> Keywords;
 
     public Response(){
         Output = new ArrayList<String>();
+        Keywords = new ArrayList<String>();
     }
 
     public String getInput() {
@@ -26,6 +28,18 @@ public class Response {
     }
     public void addOutput(String output){
         Output.add(output);
+    }
+
+    public void addKeywords(String keyword){
+        Keywords.add(keyword);
+    }
+
+    public ArrayList<String> getKeywords() {
+        return Keywords;
+    }
+
+    public void setKeywords(ArrayList<String> keywords) {
+        Keywords = keywords;
     }
 
 }
